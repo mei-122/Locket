@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Locket">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="color-scheme" content="light">
+<title>Locket</title>
+<style>
+:root{--red:#800020;--bg:#FFFFFF;--card:#F8F1F3;--cell:#EFE4E7;--text:#1A1A1A;--sub:#7A6B6F;--line:#E6D9DD;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,"SF Pro Text",Helvetica,Arial,sans-serif;overscroll-behavior:none}
+.screen{position:fixed;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+.scroll{display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(12px + env(safe-area-inset-top)) 14px calc(120px + env(safe-area-inset-bottom))}
+.scroll.on{display:block}
+.top{text-align:center;font-size:22px;font-weight:700;padding:6px 0 14px}
+.top span{color:var(--red)}
+
+#nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(300px,calc(100% - 40px));height:64px;border-radius:32px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:8;box-shadow:0 6px 24px rgba(128,0,32,.18)}
+#nav button{width:76px;height:48px;border-radius:24px;border:0;background:none;color:var(--sub);font-size:24px;display:flex;align-items:center;justify-content:center;padding:0}
+#nav button.on{background:rgba(128,0,32,.1);color:var(--red)}
+
+#camScreen{align-items:center;padding-top:calc(10px + env(safe-area-inset-top))}
+#frame{width:min(calc(100vw - 24px),calc(100vh - 360px),460px);width:min(calc(100vw - 24px),calc(100dvh - 360px),460px);aspect-ratio:1;border-radius:36px;overflow:hidden;background:var(--card);position:relative;margin-top:4px}
+#cam{width:100%;height:100%;object-fit:cover;display:block}
+#cam.mirror{transform:scaleX(-1)}
+#camMsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--sub);font-size:15px;pointer-events:none}
+#ctrl{display:flex;align-items:center;justify-content:space-between;width:min(calc(100vw - 24px),380px);margin-top:24px}
+.side{width:52px;height:52px;border-radius:26px;border:0;background:var(--cell);color:var(--text);font-size:22px;padding:0}
+#shutter{position:relative;width:96px;height:96px;border:0;background:none;padding:0;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#shutter svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+#shutter i{position:absolute;inset:14px;border-radius:50%;background:var(--red);transition:transform .15s,background .15s}
+#shutter.rec i{transform:scale(.7)}
+.hint{font-size:13px;color:var(--sub);margin-top:14px}
+
+.stats{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.pill{background:var(--card);border-radius:20px;padding:9px 16px;font-size:15px;font-weight:600}
+.mcard{background:var(--card);border-radius:28px;overflow:hidden;margin-bottom:18px}
+.mhead{background:#F0E4E7;padding:16px 20px;font-size:20px;font-weight:700}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:12px}
+.day{position:relative;aspect-ratio:1;border-radius:11px;overflow:hidden;background:transparent}
+.day.fut{background:var(--cell)}
+.day.dot::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px;border-radius:50%;background:#DCCDD1}
+.day.has{background:var(--cell)}
+.day img{width:100%;height:100%;object-fit:cover;display:block}
+.day.today{box-shadow:inset 0 0 0 3px var(--red);border-radius:11px}
+.day.today.add{background:var(--cell);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:28px;font-weight:700}
+.day.today.has::after{content:"";position:absolute;inset:0;border-radius:11px;box-shadow:inset 0 0 0 3px var(--red)}
+.cnt{position:absolute;right:3px;bottom:3px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;font-weight:700;border-radius:9px;padding:1px 6px}
+
+.sec{font-size:17px;font-weight:700;margin:6px 4px 10px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px}
+.g3{grid-template-columns:repeat(3,1fr);gap:6px}
+.cell{position:relative;aspect-ratio:1;background:var(--cell);border-radius:20px;overflow:hidden}
+.g3 .cell{border-radius:14px}
+.cell img{width:100%;height:100%;object-fit:cover;display:block}
+.play{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;border-radius:10px;padding:2px 7px}
+.yr{position:absolute;left:8px;top:8px;background:var(--red);color:#fff;font-size:12px;font-weight:600;border-radius:10px;padding:2px 8px}
+.empty{text-align:center;color:var(--sub);padding:50px 20px;line-height:1.6}
+
+.ov{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;flex-direction:column;padding:calc(14px + env(safe-area-inset-top)) 16px calc(14px + env(safe-area-inset-bottom))}
+.ov.on{display:flex}
+#viewer{z-index:25}
+.media{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.media img,.media video{max-width:100%;max-height:100%;border-radius:28px;background:var(--card)}
+.media .sq{width:min(100%,56vh);height:auto;max-height:none;aspect-ratio:1;object-fit:cover;border-radius:32px}
+.info{padding:12px 4px 0;color:var(--sub);font-size:15px;line-height:1.5}
+.row{display:flex;gap:12px;margin-top:12px}
+.btn{flex:1;border:0;border-radius:24px;padding:15px;font-size:17px;font-weight:600;background:var(--cell);color:var(--text)}
+.btn.main{background:var(--red);color:#fff}
+.btn.alt{background:transparent;color:var(--red);border:1.5px solid var(--red)}
+.btn:disabled{opacity:.5}
+input[type=text],input[type=date],input[type=password]{width:100%;padding:14px;border:1.5px solid var(--line);border-radius:16px;font-size:16px;margin-top:10px;background:var(--card);font-family:inherit;color:var(--text)}
+input:focus{outline:none;border-color:var(--red)}
+label.l{display:block;margin-top:10px;font-size:13px;color:var(--sub)}
+#dayList{flex:1;overflow-y:auto}
+#toast{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;display:none;z-index:50;max-width:90%;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="screen on" id="camScreen">
+  <div class="top"><span>❤</span> Locket</div>
+  <div id="frame"><video id="cam" playsinline muted autoplay></video><div id="camMsg"></div></div>
+  <div id="ctrl">
+    <button class="side" id="btnLib" aria-label="Tải lên">⬆</button>
+    <button id="shutter" aria-label="Chụp">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="#E8D5D9" stroke-width="5"/><circle id="ring" cx="50" cy="50" r="46" fill="none" stroke="#800020" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289"/></svg>
+      <i></i>
+    </button>
+    <button class="side" id="btnFlip" aria-label="Đổi camera">⟲</button>
+  </div>
+  <div class="hint">Chạm để chụp · Giữ để quay (tối đa 10 giây)</div>
+</div>
+
+<div class="scroll" id="histScreen">
+  <div class="top">Locket</div>
+  <div id="histBody"></div>
+</div>
+
+<div class="scroll" id="otdScreen">
+  <div class="top">Ngày này năm xưa</div>
+  <div id="otdBody"></div>
+</div>
+
+<div id="nav">
+  <button id="tab_hist" aria-label="Lịch sử">▦</button>
+  <button id="tab_cam" class="on" aria-label="Camera">◉</button>
+  <button id="tab_otd" aria-label="Năm xưa">❤</button>
+</div>
+
+<input type="file" id="fileLib" accept="image/*,video/*" multiple hidden>
+
+<div class="ov" id="preview">
+  <div class="media" id="pvMedia"></div>
+  <label class="l">Ngày của kỷ niệm</label>
+  <input type="date" id="pvDate">
+  <input type="text" id="pvCap" maxlength="120" placeholder="Chú thích (không bắt buộc)">
+  <div class="row">
+    <button class="btn" id="pvCancel">Hủy</button>
+    <button class="btn main" id="pvSave">Lưu lên Drive</button>
+  </div>
+</div>
+
+<div class="ov" id="dayov">
+  <div class="top" id="dayTitle"></div>
+  <div id="dayList"><div class="grid g3" id="dayGrid"></div></div>
+  <div class="row"><button class="btn" id="dayClose">Đóng</button></div>
+</div>
+
+<div class="ov" id="viewer">
+  <div class="media" id="vMedia"></div>
+  <div class="info" id="vInfo"></div>
+  <div class="row">
+    <button class="btn" id="vClose">Đóng</button>
+    <button class="btn alt" id="vDel">Xóa</button>
+  </div>
+</div>
+
+<div class="ov" id="login" style="justify-content:center;z-index:40">
+  <div class="top" style="text-align:left;padding-left:0"><span>❤</span> Locket</div>
+  <div style="color:var(--sub)">Nhập mật khẩu của bạn</div>
+  <input type="password" id="pw" placeholder="Mật khẩu" autocomplete="current-password">
+  <div class="row"><button class="btn main" id="pwGo">Vào</button></div>
+  <div id="pwErr" style="color:var(--red);margin-top:10px"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxg2CWbdVY16NyV3UV7PPf1pUP1I5AW8bN08EJtCkdE56qD-i-BGXbT16aoxdkPyBKF2Q/exec'; // dạng https://script.google.com/macros/s/.../exec
+const MAXSEC = 10;
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2, '0');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let KEY = ''; try { KEY = localStorage.getItem('k') || ''; } catch (e) {}
+
+let toastT;
+function toast(msg, ms) {
+  const t = $('toast'); t.textContent = msg; t.style.display = 'block';
+  clearTimeout(toastT); if (ms) toastT = setTimeout(() => t.style.display = 'none', ms);
+}
+async function api(body) {
+  const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ k: KEY }, body)) });
+  const j = await r.json();
+  if (j.error) {
+    if (j.error === 'Sai mật khẩu') { KEY = ''; try { localStorage.removeItem('k'); } catch (e) {} $('login').classList.add('on'); }
+    throw new Error(j.error);
+  }
+  return j;
+}
+function stamp(d) {
+  return { date: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), time: pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds()) };
+}
+function squareJpeg(src, sw, sh, size, q) {
+  const s = Math.min(sw, sh), o = Math.min(s, size);
+  const c = document.createElement('canvas'); c.width = c.height = o;
+  c.getContext('2d').drawImage(src, (sw - s) / 2, (sh - s) / 2, s, s, 0, 0, o, o);
+  return c.toDataURL('image/jpeg', q);
+}
+function fitJpeg(img, max, q) {
+  const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q);
+}
+const toB64 = blob => new Promise((ok, fail) => { const r = new FileReader(); r.onload = () => ok(r.result.split(',')[1]); r.onerror = fail; r.readAsDataURL(blob); });
+const loadImg = file => new Promise((ok, fail) => { const u = URL.createObjectURL(file); const i = new Image(); i.onload = () => { URL.revokeObjectURL(u); ok(i); }; i.onerror = () => fail(new Error('không đọc được ảnh')); i.src = u; });
+function b64Blob(b64, mime) { const bin = atob(b64), a = new Uint8Array(bin.length); for (let k = 0; k < bin.length; k++) a[k] = bin.charCodeAt(k); return new Blob([a], { type: mime }); }
+function fmtDate(ts) {
+  const d = new Date(+ts.slice(0, 4), +ts.slice(4, 6) - 1, +ts.slice(6, 8), +ts.slice(9, 11), +ts.slice(11, 13));
+  return d.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+const dkey = d => d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
+
+let tab = 'cam';
+function go(t) {
+  tab = t;
+  $('camScreen').classList.toggle('on', t === 'cam');
+  $('histScreen').classList.toggle('on', t === 'hist');
+  $('otdScreen').classList.toggle('on', t === 'otd');
+  ['cam', 'hist', 'otd'].forEach(x => $('tab_' + x).classList.toggle('on', x === t));
+  if (t === 'cam') startCam(); else { stopCam(); loadIndex(); }
+}
+$('tab_cam').onclick = () => go('cam');
+$('tab_hist').onclick = () => go('hist');
+$('tab_otd').onclick = () => go('otd');
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopCam(); else if (tab === 'cam' && KEY && !$('preview').classList.contains('on')) startCam();
+});
+
+const cam = $('cam'), sh = $('shutter'), ring = $('ring');
+let stream = null, facing = 'user';
+async function startCam() {
+  stopCam(); $('camMsg').textContent = '';
+  try {
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: true }); }
+    catch (e) { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false }); }
+    cam.srcObject = stream; cam.classList.toggle('mirror', facing === 'user');
+    await cam.play().catch(() => {});
+  } catch (e) {
+    stream = null;
+    $('camMsg').innerHTML = 'Chưa mở được camera.<br>Hãy cho phép camera cho trang này,<br>hoặc dùng nút ⬆ để tải ảnh lên.';
+  }
+}
+function stopCam() { if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; } cam.srcObject = null; }
+$('btnFlip').onclick = () => { facing = facing === 'user' ? 'environment' : 'user'; startCam(); };
+
+let downAt = 0, holdT = null, wasVideo = false, isRec = false, rec = null, chunks = [], recStart = 0, raf = 0, vthumb = null;
+const setRing = p => ring.style.strokeDashoffset = 289 * (1 - Math.min(1, p));
+
+sh.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (!stream || !cam.videoWidth) return;
+  try { sh.setPointerCapture(e.pointerId); } catch (_) {}
+  downAt = Date.now(); wasVideo = false;
+  holdT = setTimeout(beginVideo, 300);
+});
+sh.addEventListener('pointerup', () => {
+  if (!downAt) return;
+  clearTimeout(holdT); downAt = 0;
+  if (wasVideo) { if (isRec) endVideo(); } else takePhoto();
+});
+sh.addEventListener('pointercancel', () => { clearTimeout(holdT); downAt = 0; if (isRec) endVideo(); });
+sh.addEventListener('contextmenu', e => e.preventDefault());
+
+function takePhoto() {
+  if (!stream || !cam.videoWidth) return;
+  const w = cam.videoWidth, h = cam.videoHeight;
+  openPreview({ type: 'p', url: squareJpeg(cam, w, h, 1280, .88), thumb: squareJpeg(cam, w, h, 640, .78), mime: 'image/jpeg', ext: 'jpg', d: new Date() });
+}
+function beginVideo() {
+  if (!window.MediaRecorder) { toast('Máy chưa hỗ trợ quay video', 3000); downAt = 0; return; }
+  wasVideo = true;
+  vthumb = squareJpeg(cam, cam.videoWidth, cam.videoHeight, 640, .78);
+  const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
+  const mime = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+  chunks = [];
+  try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2500000 } : { videoBitsPerSecond: 2500000 }); }
+  catch (e) { toast('Không quay được video', 3000); return; }
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  rec.onstop = () => {
+    const type = (rec.mimeType || mime || 'video/mp4').split(';')[0];
+    const blob = new Blob(chunks, { type });
+    isRec = false; sh.classList.remove('rec'); cancelAnimationFrame(raf); setRing(0);
+    if (blob.size < 1000) { toast('Clip quá ngắn', 2000); return; }
+    openPreview({ type: 'v', url: URL.createObjectURL(blob), blob, thumb: vthumb, mime: type, ext: type.includes('mp4') ? 'mp4' : 'webm', d: new Date() });
+  };
+  rec.start(); isRec = true; sh.classList.add('rec'); recStart = Date.now(); tick();
+}
+function tick() {
+  const t = (Date.now() - recStart) / 1000; setRing(t / MAXSEC);
+  if (t >= MAXSEC) { endVideo(); return; }
+  raf = requestAnimationFrame(tick);
+}
+function endVideo() { if (rec && rec.state === 'recording') rec.stop(); }
+
+let pending = null;
+function openPreview(p) {
+  pending = p; const box = $('pvMedia'); box.innerHTML = '';
+  let el;
+  if (p.type === 'p') { el = new Image(); el.src = p.url; }
+  else { el = document.createElement('video'); el.src = p.url; el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.play().catch(() => {}); }
+  el.className = 'sq'; box.appendChild(el);
+  const s = stamp(p.d); p.time = s.time; $('pvDate').value = s.date; $('pvCap').value = '';
+  $('pvSave').disabled = false; $('pvSave').textContent = 'Lưu lên Drive';
+  $('preview').classList.add('on'); stopCam();
+}
+function closePreview() {
+  if (pending && pending.type === 'v') URL.revokeObjectURL(pending.url);
+  pending = null; $('pvMedia').innerHTML = ''; $('preview').classList.remove('on');
+  if (tab === 'cam') startCam();
+}
+$('pvCancel').onclick = closePreview;
+$('pvSave').onclick = async () => {
+  const p = pending; if (!p) return;
+  $('pvSave').disabled = true; $('pvSave').textContent = 'Đang lưu...';
+  try {
+    const ts = ($('pvDate').value || stamp(new Date()).date).replace(/-/g, '') + '-' + p.time;
+    const data = p.type === 'p' ? p.url.split(',')[1] : await toB64(p.blob);
+    await api({ a: 'upload', type: p.type, mime: p.mime, ext: p.ext, ts, caption: $('pvCap').value, data, thumb: p.thumb ? p.thumb.split(',')[1] : '' });
+    closePreview(); stale = true; toast('Đã lưu ✓', 2000);
+  } catch (e) { $('pvSave').disabled = false; $('pvSave').textContent = 'Thử lại'; toast('Lỗi: ' + e.message, 4000); }
+};
+
+$('btnLib').onclick = () => $('fileLib').click();
+function videoInfo(file) {
+  return new Promise(res => {
+    const v = document.createElement('video'); v.muted = true; v.playsInline = true; v.preload = 'auto'; v.setAttribute('playsinline', '');
+    const u = URL.createObjectURL(file); let dur = 0, done = false;
+    const fin = th => { if (done) return; done = true; URL.revokeObjectURL(u); res({ dur, thumb: th || null }); };
+    v.onloadedmetadata = () => { dur = v.duration || 0; try { v.currentTime = Math.min(.1, dur / 2); } catch (_) { fin(); } };
+    v.onseeked = () => { let th = null; try { th = squareJpeg(v, v.videoWidth, v.videoHeight, 640, .78); } catch (_) {} fin(th); };
+    v.onerror = () => fin();
+    setTimeout(() => fin(), 5000);
+    v.src = u; v.load();
+  });
+}
+$('fileLib').onchange = async e => {
+  const files = Array.from(e.target.files); e.target.value = '';
+  let ok = 0;
+  for (let n = 0; n < files.length; n++) {
+    const f = files[n];
+    toast('Đang tải lên ' + (n + 1) + '/' + files.length + '...');
+    try {
+      const s = stamp(new Date(f.lastModified || Date.now())), ts = s.date.replace(/-/g, '') + '-' + s.time;
+      if (f.type.startsWith('video')) {
+        if (f.size > 20 * 1024 * 1024) throw new Error('video nặng hơn 20MB');
+        const v = await videoInfo(f);
+        if (v.dur > MAXSEC + 0.6) throw new Error('video dài hơn ' + MAXSEC + ' giây');
+        await api({ a: 'upload', type: 'v', mime: f.type || 'video/mp4', ext: f.name.split('.').pop() || 'mp4', ts, caption: '', data: await toB64(f), thumb: v.thumb ? v.thumb.split(',')[1] : '' });
+      } else {
+        const img = await loadImg(f);
+        const full = fitJpeg(img, 1600, .85), th = squareJpeg(img, img.naturalWidth, img.naturalHeight, 640, .78);
+        await api({ a: 'upload', type: 'p', ts, caption: '', data: full.split(',')[1], thumb: th.split(',')[1] });
+      }
+      ok++;
+    } catch (err) { toast('Bỏ qua tệp ' + (n + 1) + ': ' + err.message, 3500); await sleep(1800); }
+  }
+  toast('Đã tải lên ' + ok + '/' + files.length + ' ✓', 2500); stale = true;
+};
+
+let items = [], loaded = false, stale = true;
+async function loadIndex(force) {
+  if (loaded && !stale && !force) { renderCurrent(); return; }
+  const body = tab === 'otd' ? $('otdBody') : $('histBody');
+  body.innerHTML = '<div class="empty">Đang tải...</div>';
+  try { const r = await api({ a: 'index' }); items = r.items; loaded = true; stale = false; renderCurrent(); }
+  catch (e) { body.innerHTML = '<div class="empty">Lỗi: ' + esc(e.message) + '</div>'; }
+}
+function renderCurrent() { if (tab === 'hist') renderHist(); else if (tab === 'otd') renderOtd(); }
+
+const cache = {}, queue = [], queued = new Set(); let busy = 0;
+function queueThumb(i) { if (!i.th || cache[i.th] || queued.has(i.th)) return; queued.add(i.th); queue.push(i.th); pump(); }
+function pump() {
+  while (busy < 3 && queue.length) {
+    const ids = queue.splice(0, 6); busy++;
+    api({ a: 'thumbs', ids }).then(r => {
+      for (const id in r.thumbs) {
+        cache[id] = 'data:image/jpeg;base64,' + r.thumbs[id];
+        document.querySelectorAll('[data-th="' + id + '"] img').forEach(im => im.src = cache[id]);
+      }
+    }).catch(() => ids.forEach(id => queued.delete(id))).finally(() => { busy--; pump(); });
+  }
+}
+const io = new IntersectionObserver(es => es.forEach(en => {
+  if (en.isIntersecting) { queueThumb(en.target._item); io.unobserve(en.target); }
+}), { rootMargin: '500px' });
+
+function attachThumb(d, item) {
+  if (item.th) d.dataset.th = item.th;
+  const im = document.createElement('img'); if (item.th && cache[item.th]) im.src = cache[item.th];
+  d.appendChild(im); d._item = item; io.observe(d);
+}
+function makeCell(i, badge) {
+  const d = document.createElement('div'); d.className = 'cell'; attachThumb(d, i);
+  if (i.t === 'v') { const p = document.createElement('span'); p.className = 'play'; p.textContent = '▶'; d.appendChild(p); }
+  if (badge) { const y = document.createElement('span'); y.className = 'yr'; y.textContent = i.ts.slice(0, 4); d.appendChild(y); }
+  d.onclick = () => openViewer(i);
+  return d;
+}
+
+function streakOf(byDay) {
+  const d = new Date();
+  if (!byDay[dkey(d)]) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (byDay[dkey(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function renderHist() {
+  io.disconnect();
+  const body = $('histBody'); body.innerHTML = '';
+  const byDay = {};
+  items.forEach(i => { (byDay[i.ts.slice(0, 8)] = byDay[i.ts.slice(0, 8)] || []).push(i); });
+
+  const st = document.createElement('div'); st.className = 'stats';
+  st.innerHTML = '<div class="pill">❤ ' + items.length + ' kỷ niệm</div><div class="pill">🔥 chuỗi ' + streakOf(byDay) + ' ngày</div>';
+  body.appendChild(st);
+
+  const now = new Date(), todayK = dkey(now);
+  let sy = now.getFullYear(), sm = now.getMonth();
+  if (items.length) { const last = items[items.length - 1].ts; sy = +last.slice(0, 4); sm = +last.slice(4, 6) - 1; }
+  const ey = now.getFullYear(), em = now.getMonth();
+
+  for (let y = sy, m = sm; y < ey || (y === ey && m <= em); m++) {
+    if (m > 11) { m = 0; y++; if (y > ey) break; }
+    const card = document.createElement('div'); card.className = 'mcard';
+    const h = document.createElement('div'); h.className = 'mhead'; h.textContent = 'tháng ' + (m + 1) + ' ' + y; card.appendChild(h);
+    const g = document.createElement('div'); g.className = 'dgrid';
+    const lead = new Date(y, m, 1).getDay(), nd = new Date(y, m + 1, 0).getDate();
+    for (let k = 0; k < lead; k++) g.appendChild(document.createElement('div'));
+    for (let d = 1; d <= nd; d++) {
+      const key = y + pad(m + 1) + pad(d), list = byDay[key];
+      const c = document.createElement('div'); c.className = 'day';
+      const isToday = key === todayK;
+      if (list) {
+        c.classList.add('has'); attachThumb(c, list[0]);
+        if (list.length > 1) { const b = document.createElement('span'); b.className = 'cnt'; b.textContent = list.length; c.appendChild(b); }
+        c.onclick = () => openDay(key, list);
+      } else if (isToday) { c.classList.add('add'); c.textContent = '+'; c.onclick = () => go('cam'); }
+      else if (key > todayK) c.classList.add('fut');
+      else c.classList.add('dot');
+      if (isToday) c.classList.add('today');
+      g.appendChild(c);
+    }
+    card.appendChild(g); body.appendChild(card);
+  }
+  const sc = $('histScreen'); sc.scrollTop = sc.scrollHeight;
+}
+function openDay(key, list) {
+  if (list.length === 1) { openViewer(list[0]); return; }
+  $('dayTitle').textContent = key.slice(6) + '/' + key.slice(4, 6) + '/' + key.slice(0, 4);
+  const g = $('dayGrid'); g.innerHTML = '';
+  list.slice().sort((a, b) => a.ts < b.ts ? -1 : 1).forEach(i => g.appendChild(makeCell(i)));
+  $('dayov').classList.add('on');
+}
+$('dayClose').onclick = () => $('dayov').classList.remove('on');
+
+function renderOtd() {
+  io.disconnect();
+  const body = $('otdBody'); body.innerHTML = '';
+  if (!items.length) { body.innerHTML = '<div class="empty">Chưa có kỷ niệm nào.<br>Qua tab Camera để chụp tấm đầu tiên nhé ❤</div>'; return; }
+  const now = new Date(), md = pad(now.getMonth() + 1) + pad(now.getDate()), yr = String(now.getFullYear());
+  const same = items.filter(i => i.ts.slice(4, 8) === md && i.ts.slice(0, 4) < yr);
+  if (same.length) {
+    const byYear = {};
+    same.forEach(i => (byYear[i.ts.slice(0, 4)] = byYear[i.ts.slice(0, 4)] || []).push(i));
+    Object.keys(byYear).sort().reverse().forEach(y => {
+      const n = +yr - +y;
+      const t = document.createElement('div'); t.className = 'sec'; t.textContent = (n === 1 ? '1 năm trước' : n + ' năm trước') + ' · ' + y; body.appendChild(t);
+      const g = document.createElement('div'); g.className = 'grid'; byYear[y].forEach(i => g.appendChild(makeCell(i))); body.appendChild(g);
+    });
+  } else {
+    const e = document.createElement('div'); e.className = 'empty'; e.innerHTML = 'Hôm nay chưa có kỷ niệm của những năm trước.<br>Nhìn lại vài khoảnh khắc ngẫu nhiên nhé ❤'; body.appendChild(e);
+    const pick = items.slice().sort(() => Math.random() - .5).slice(0, 6);
+    const g = document.createElement('div'); g.className = 'grid'; pick.forEach(i => g.appendChild(makeCell(i, true))); body.appendChild(g);
+  }
+}
+
+let curItem = null, curUrl = null;
+async function openViewer(i) {
+  curItem = i; $('vMedia').innerHTML = '<div class="empty">Đang tải...</div>';
+  $('vInfo').textContent = fmtDate(i.ts); $('viewer').classList.add('on');
+  try {
+    const r = await api({ a: 'file', id: i.id });
+    if (curItem !== i) return;
+    curUrl = URL.createObjectURL(b64Blob(r.data, r.mime));
+    let el;
+    if (r.mime.startsWith('video')) {
+      el = document.createElement('video'); el.src = curUrl; el.controls = true; el.loop = true; el.playsInline = true; el.setAttribute('playsinline', '');
+      el.play().catch(() => { el.muted = true; el.play().catch(() => {}); });
+    } else { el = new Image(); el.src = curUrl; }
+    $('vMedia').innerHTML = ''; $('vMedia').appendChild(el);
+    $('vInfo').innerHTML = esc(fmtDate(i.ts)) + (r.caption ? '<br><b style="color:var(--text)">' + esc(r.caption) + '</b>' : '');
+  } catch (e) { $('vMedia').innerHTML = '<div class="empty">Lỗi: ' + esc(e.message) + '</div>'; }
+}
+function closeViewer() {
+  curItem = null; if (curUrl) { URL.revokeObjectURL(curUrl); curUrl = null; }
+  $('vMedia').innerHTML = ''; $('viewer').classList.remove('on');
+}
+$('vClose').onclick = closeViewer;
+$('vDel').onclick = async () => {
+  if (!curItem || !confirm('Xóa kỷ niệm này? (vào Thùng rác của Drive)')) return;
+  const i = curItem; toast('Đang xóa...');
+  try {
+    await api({ a: 'delete', id: i.id, th: i.th });
+    closeViewer(); $('dayov').classList.remove('on'); toast('Đã xóa', 2000); loadIndex(true);
+  } catch (e) { toast('Lỗi: ' + e.message, 4000); }
+};
+
+$('pwGo').onclick = async () => {
+  const v = $('pw').value.trim(); if (!v) return;
+  KEY = v; $('pwErr').textContent = ''; $('pwGo').disabled = true;
+  try {
+    const r = await api({ a: 'index' });
+    try { localStorage.setItem('k', KEY); } catch (e) {}
+    items = r.items; loaded = true; stale = false;
+    $('login').classList.remove('on'); $('pw').value = ''; go('cam');
+  } catch (e) { $('pwErr').textContent = e.message; }
+  $('pwGo').disabled = false;
+};
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('pwGo').click(); });
+
+if (!KEY) $('login').classList.add('on'); else go('cam');
+</script>
+</body>
+</html>
