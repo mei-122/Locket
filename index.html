@@ -20,7 +20,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 .top{text-align:center;font-size:22px;font-weight:700;padding:6px 0 14px}
 .top span{color:var(--red)}
 
-#nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(300px,calc(100% - 40px));height:64px;border-radius:32px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:8;box-shadow:0 6px 24px rgba(128,0,32,.18)}
+#nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(300px,calc(100% - 40px));height:64px;border-radius:32px;background:#fff;display:flex;align-items:center;justify-content:space-around;padding:0 8px;z-index:8;box-shadow:0 4px 18px rgba(128,0,32,.2)}
 #nav button{width:76px;height:48px;border-radius:24px;border:0;background:none;color:var(--sub);font-size:24px;display:flex;align-items:center;justify-content:center;padding:0}
 #nav button.on{background:rgba(128,0,32,.1);color:var(--red)}
 
@@ -33,7 +33,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 .side{width:52px;height:52px;border-radius:26px;border:0;background:var(--cell);color:var(--text);font-size:22px;padding:0}
 #shutter{position:relative;width:96px;height:96px;border:0;background:none;padding:0;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #shutter svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-#shutter i{position:absolute;inset:14px;border-radius:50%;background:var(--red);transition:transform .15s,background .15s}
+#shutter i{position:absolute;inset:14px;border-radius:50%;background:var(--red);transition:transform .15s}
 #shutter.rec i{transform:scale(.7)}
 .hint{font-size:13px;color:var(--sub);margin-top:14px}
 
@@ -67,7 +67,6 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 #viewer{z-index:25}
 .media{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
 .media img,.media video{max-width:100%;max-height:100%;border-radius:28px;background:var(--card)}
-.media .sq{width:min(100%,56vh);height:auto;max-height:none;aspect-ratio:1;object-fit:cover;border-radius:32px}
 .info{padding:12px 4px 0;color:var(--sub);font-size:15px;line-height:1.5}
 .row{display:flex;gap:12px;margin-top:12px}
 .btn{flex:1;border:0;border-radius:24px;padding:15px;font-size:17px;font-weight:600;background:var(--cell);color:var(--text)}
@@ -76,8 +75,29 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-famil
 .btn:disabled{opacity:.5}
 input[type=text],input[type=date],input[type=password]{width:100%;padding:14px;border:1.5px solid var(--line);border-radius:16px;font-size:16px;margin-top:10px;background:var(--card);font-family:inherit;color:var(--text)}
 input:focus{outline:none;border-color:var(--red)}
-label.l{display:block;margin-top:10px;font-size:13px;color:var(--sub)}
 #dayList{flex:1;overflow-y:auto}
+
+/* Màn hình xem trước kiểu Locket */
+.pvtop{position:relative;height:48px;display:flex;align-items:center;justify-content:center}
+.pvt{font-size:19px;font-weight:700}
+.pvdl{position:absolute;right:0;top:0;width:46px;height:46px;border:0;border-radius:50%;background:var(--cell);color:var(--red);padding:0;display:flex;align-items:center;justify-content:center}
+.pvdl svg{width:22px;height:22px}
+.pvmid{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.pvbox{position:relative;width:min(100%,calc(100vh - 340px),520px);width:min(100%,calc(100dvh - 340px),520px);aspect-ratio:1;border-radius:44px;overflow:hidden;background:var(--cell)}
+.pvbox .in{position:absolute;inset:0}
+.fill{width:100%;height:100%;object-fit:cover;display:block}
+#pvCap{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 48px);max-width:340px;margin:0;padding:12px 18px;border:0;border-radius:26px;background:rgba(0,0,0,.38);color:#fff;font-size:19px;font-weight:600;text-align:center}
+#pvCap::placeholder{color:rgba(255,255,255,.9)}
+#pvCap:focus{background:rgba(0,0,0,.55);border:0}
+.pvbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 0}
+.rb{width:64px;height:64px;border-radius:50%;border:0;background:var(--cell);color:var(--text);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0}
+.rb svg{width:26px;height:26px}
+.send{width:88px;height:88px;border-radius:50%;border:0;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+.send svg{width:38px;height:38px}
+.datepill{position:relative;align-self:center;margin-top:12px;padding:8px 18px;border-radius:22px;border:2px solid var(--red);color:var(--red);font-weight:700;font-size:15px}
+.datepill input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;padding:0;border:0}
+
+#upst{position:fixed;top:calc(58px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:var(--red);color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;font-weight:600;z-index:45;display:none}
 #toast{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;display:none;z-index:50;max-width:90%;text-align:center}
 </style>
 </head>
@@ -116,14 +136,19 @@ label.l{display:block;margin-top:10px;font-size:13px;color:var(--sub)}
 <input type="file" id="fileLib" accept="image/*,video/*" multiple hidden>
 
 <div class="ov" id="preview">
-  <div class="media" id="pvMedia"></div>
-  <label class="l">Ngày của kỷ niệm</label>
-  <input type="date" id="pvDate">
-  <input type="text" id="pvCap" maxlength="120" placeholder="Chú thích (không bắt buộc)">
-  <div class="row">
-    <button class="btn" id="pvCancel">Hủy</button>
-    <button class="btn main" id="pvSave">Lưu lên Drive</button>
+  <div class="pvtop">
+    <span class="pvt">Lưu vào Drive</span>
+    <button class="pvdl" id="pvDl" aria-label="Lưu về máy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 7l4-4 4 4M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg></button>
   </div>
+  <div class="pvmid">
+    <div class="pvbox"><div class="in" id="pvMedia"></div><input type="text" id="pvCap" maxlength="120" placeholder="Thêm chú thích"></div>
+  </div>
+  <div class="pvbar">
+    <button class="rb" id="pvCancel" aria-label="Hủy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+    <button class="send" id="pvSave" aria-label="Lưu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M21 3L3 10.5l7 3 3 7L21 3z"/><path d="M10 13.5L21 3"/></svg></button>
+    <button class="rb" id="pvAa" aria-label="Chú thích">Aa</button>
+  </div>
+  <label class="datepill"><span id="pvDateTxt"></span><input type="date" id="pvDate"></label>
 </div>
 
 <div class="ov" id="dayov">
@@ -149,10 +174,11 @@ label.l{display:block;margin-top:10px;font-size:13px;color:var(--sub)}
   <div id="pwErr" style="color:var(--red);margin-top:10px"></div>
 </div>
 
+<div id="upst"></div>
 <div id="toast"></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbx-DkshoF3k48iMWrNcd_vBfMPLtVY98XOlJ0ZFc-WklT4JyVinS-ZU4fCZkN4LXS5uUg/exec';
+const API = 'https://script.google.com/macros/s/AKfycbw9IpH4y0Dk3y-94x_l9UblPPQdODs2udLGa_Uwu4RxnixPtDRsIsLZnDoUsv_Evq2FYw/exec';
 const MAXSEC = 10;
 const $ = id => document.getElementById(id);
 const pad = n => String(n).padStart(2, '0');
@@ -197,8 +223,25 @@ function fmtDate(ts) {
   const d = new Date(+ts.slice(0, 4), +ts.slice(4, 6) - 1, +ts.slice(6, 8), +ts.slice(9, 11), +ts.slice(11, 13));
   return d.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
+const fmtD = v => { const a = v.split('-'); return a[2] + '/' + a[1] + '/' + a[0]; };
 const dkey = d => d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate());
 
+/* ---------- Bộ nhớ đệm ảnh nhỏ (IndexedDB) ---------- */
+let dbp = null;
+function db() {
+  if (!dbp) dbp = new Promise(ok => {
+    try { const r = indexedDB.open('lk', 1); r.onupgradeneeded = () => r.result.createObjectStore('t'); r.onsuccess = () => ok(r.result); r.onerror = () => ok(null); }
+    catch (e) { ok(null); }
+  });
+  return dbp;
+}
+async function tget(id) {
+  const d = await db(); if (!d) return null;
+  return new Promise(ok => { try { const q = d.transaction('t').objectStore('t').get(id); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); } catch (e) { ok(null); } });
+}
+async function tset(id, v) { const d = await db(); if (!d) return; try { d.transaction('t', 'readwrite').objectStore('t').put(v, id); } catch (e) {} }
+
+/* ---------- Chuyển tab ---------- */
 let tab = 'cam';
 function go(t) {
   tab = t;
@@ -215,12 +258,13 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) stopCam(); else if (tab === 'cam' && KEY && !$('preview').classList.contains('on')) startCam();
 });
 
+/* ---------- Camera ---------- */
 const cam = $('cam'), sh = $('shutter'), ring = $('ring');
 let stream = null, facing = 'user';
 async function startCam() {
   stopCam(); $('camMsg').textContent = '';
   try {
-    try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: true }); }
+    try { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 1080 }, height: { ideal: 1080 } }, audio: true }); }
     catch (e) { stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing }, audio: false }); }
     cam.srcObject = stream; cam.classList.toggle('mirror', facing === 'user');
     await cam.play().catch(() => {});
@@ -252,17 +296,19 @@ sh.addEventListener('contextmenu', e => e.preventDefault());
 
 function takePhoto() {
   if (!stream || !cam.videoWidth) return;
-  const w = cam.videoWidth, h = cam.videoHeight;
-  openPreview({ type: 'p', url: squareJpeg(cam, w, h, 1280, .88), thumb: squareJpeg(cam, w, h, 640, .78), mime: 'image/jpeg', ext: 'jpg', d: new Date() });
+  const w = cam.videoWidth, h = cam.videoHeight, s = Math.min(w, h), o = Math.min(s, 1080);
+  const c = document.createElement('canvas'); c.width = c.height = o;
+  c.getContext('2d').drawImage(cam, (w - s) / 2, (h - s) / 2, s, s, 0, 0, o, o);
+  openPreview({ type: 'p', canvas: c, mime: 'image/jpeg', ext: 'jpg', d: new Date() });
 }
 function beginVideo() {
   if (!window.MediaRecorder) { toast('Máy chưa hỗ trợ quay video', 3000); downAt = 0; return; }
   wasVideo = true;
-  vthumb = squareJpeg(cam, cam.videoWidth, cam.videoHeight, 640, .78);
+  vthumb = squareJpeg(cam, cam.videoWidth, cam.videoHeight, 480, .75);
   const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
   const mime = types.find(t => MediaRecorder.isTypeSupported(t)) || '';
   chunks = [];
-  try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2500000 } : { videoBitsPerSecond: 2500000 }); }
+  try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 2000000 } : { videoBitsPerSecond: 2000000 }); }
   catch (e) { toast('Không quay được video', 3000); return; }
   rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
   rec.onstop = () => {
@@ -281,15 +327,15 @@ function tick() {
 }
 function endVideo() { if (rec && rec.state === 'recording') rec.stop(); }
 
+/* ---------- Xem trước (kiểu Locket) ---------- */
 let pending = null;
 function openPreview(p) {
   pending = p; const box = $('pvMedia'); box.innerHTML = '';
   let el;
-  if (p.type === 'p') { el = new Image(); el.src = p.url; }
+  if (p.type === 'p') el = p.canvas;
   else { el = document.createElement('video'); el.src = p.url; el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; el.setAttribute('playsinline', ''); el.play().catch(() => {}); }
-  el.className = 'sq'; box.appendChild(el);
-  const s = stamp(p.d); p.time = s.time; $('pvDate').value = s.date; $('pvCap').value = '';
-  $('pvSave').disabled = false; $('pvSave').textContent = 'Lưu lên Drive';
+  el.className = 'fill'; box.appendChild(el);
+  const s = stamp(p.d); p.time = s.time; $('pvDate').value = s.date; $('pvDateTxt').textContent = '📅 ' + fmtD(s.date); $('pvCap').value = '';
   $('preview').classList.add('on'); stopCam();
 }
 function closePreview() {
@@ -298,17 +344,53 @@ function closePreview() {
   if (tab === 'cam') startCam();
 }
 $('pvCancel').onclick = closePreview;
-$('pvSave').onclick = async () => {
+$('pvAa').onclick = () => $('pvCap').focus();
+$('pvDate').onchange = () => { const v = $('pvDate').value; if (v) $('pvDateTxt').textContent = '📅 ' + fmtD(v); };
+$('pvDl').onclick = async () => {
   const p = pending; if (!p) return;
-  $('pvSave').disabled = true; $('pvSave').textContent = 'Đang lưu...';
-  try {
-    const ts = ($('pvDate').value || stamp(new Date()).date).replace(/-/g, '') + '-' + p.time;
-    const data = p.type === 'p' ? p.url.split(',')[1] : await toB64(p.blob);
-    await api({ a: 'upload', type: p.type, mime: p.mime, ext: p.ext, ts, caption: $('pvCap').value, data, thumb: p.thumb ? p.thumb.split(',')[1] : '' });
-    closePreview(); stale = true; toast('Đã lưu ✓', 2000);
-  } catch (e) { $('pvSave').disabled = false; $('pvSave').textContent = 'Thử lại'; toast('Lỗi: ' + e.message, 4000); }
+  let blob, name = 'locket-' + Date.now();
+  if (p.type === 'p') { blob = await new Promise(r => p.canvas.toBlob(r, 'image/jpeg', .92)); name += '.jpg'; }
+  else { blob = p.blob; name += '.' + p.ext; }
+  const file = new File([blob], name, { type: blob.type });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file] }); } catch (e) {} }
+  else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+};
+$('pvSave').onclick = () => {
+  const p = pending; if (!p) return;
+  const d = $('pvDate').value || stamp(new Date()).date;
+  const job = { type: p.type, canvas: p.canvas, blob: p.blob, vthumb: p.thumb, mime: p.mime, ext: p.ext, ts: d.replace(/-/g, '') + '-' + p.time, caption: $('pvCap').value };
+  closePreview(); enqueue(job);
 };
 
+/* ---------- Hàng đợi tải lên (chạy nền, không chờ) ---------- */
+const upQ = [], upFailed = []; let upBusy = false;
+function updUp() {
+  const u = $('upst');
+  if (upQ.length) { u.textContent = 'Đang lưu ' + upQ.length + '…'; u.style.display = 'block'; }
+  else if (upFailed.length) { u.textContent = 'Lỗi · bấm để thử lại (' + upFailed.length + ')'; u.style.display = 'block'; }
+  else u.style.display = 'none';
+}
+$('upst').onclick = () => { if (!upQ.length && upFailed.length) { while (upFailed.length) upQ.push(upFailed.shift()); updUp(); runUp(); } };
+function enqueue(job) { upQ.push(job); updUp(); runUp(); }
+async function runUp() {
+  if (upBusy) return; upBusy = true; let done = 0;
+  while (upQ.length) {
+    const j = upQ[0]; updUp();
+    try {
+      let data, thumb;
+      if (j.type === 'p') {
+        data = j.canvas.toDataURL('image/jpeg', .85).split(',')[1];
+        thumb = squareJpeg(j.canvas, j.canvas.width, j.canvas.height, 480, .75).split(',')[1];
+      } else { data = await toB64(j.blob); thumb = j.vthumb ? j.vthumb.split(',')[1] : ''; }
+      await api({ a: 'upload', type: j.type, mime: j.mime, ext: j.ext, ts: j.ts, caption: j.caption, data, thumb });
+      upQ.shift(); done++; stale = true;
+    } catch (e) { upQ.shift(); upFailed.push(j); }
+  }
+  upBusy = false; updUp();
+  if (done) { toast('Đã lưu ✓', 1800); if (tab !== 'cam') loadIndex(true); }
+}
+
+/* ---------- Tải ảnh/video từ thư viện ---------- */
 $('btnLib').onclick = () => $('fileLib').click();
 function videoInfo(file) {
   return new Promise(res => {
@@ -316,7 +398,7 @@ function videoInfo(file) {
     const u = URL.createObjectURL(file); let dur = 0, done = false;
     const fin = th => { if (done) return; done = true; URL.revokeObjectURL(u); res({ dur, thumb: th || null }); };
     v.onloadedmetadata = () => { dur = v.duration || 0; try { v.currentTime = Math.min(.1, dur / 2); } catch (_) { fin(); } };
-    v.onseeked = () => { let th = null; try { th = squareJpeg(v, v.videoWidth, v.videoHeight, 640, .78); } catch (_) {} fin(th); };
+    v.onseeked = () => { let th = null; try { th = squareJpeg(v, v.videoWidth, v.videoHeight, 480, .75); } catch (_) {} fin(th); };
     v.onerror = () => fin();
     setTimeout(() => fin(), 5000);
     v.src = u; v.load();
@@ -337,7 +419,7 @@ $('fileLib').onchange = async e => {
         await api({ a: 'upload', type: 'v', mime: f.type || 'video/mp4', ext: f.name.split('.').pop() || 'mp4', ts, caption: '', data: await toB64(f), thumb: v.thumb ? v.thumb.split(',')[1] : '' });
       } else {
         const img = await loadImg(f);
-        const full = fitJpeg(img, 1600, .85), th = squareJpeg(img, img.naturalWidth, img.naturalHeight, 640, .78);
+        const full = fitJpeg(img, 1600, .85), th = squareJpeg(img, img.naturalWidth, img.naturalHeight, 480, .75);
         await api({ a: 'upload', type: 'p', ts, caption: '', data: full.split(',')[1], thumb: th.split(',')[1] });
       }
       ok++;
@@ -346,26 +428,42 @@ $('fileLib').onchange = async e => {
   toast('Đã tải lên ' + ok + '/' + files.length + ' ✓', 2500); stale = true;
 };
 
-let items = [], loaded = false, stale = true;
-async function loadIndex(force) {
-  if (loaded && !stale && !force) { renderCurrent(); return; }
-  const body = tab === 'otd' ? $('otdBody') : $('histBody');
-  body.innerHTML = '<div class="empty">Đang tải...</div>';
-  try { const r = await api({ a: 'index' }); items = r.items; loaded = true; stale = false; renderCurrent(); }
-  catch (e) { body.innerHTML = '<div class="empty">Lỗi: ' + esc(e.message) + '</div>'; }
+/* ---------- Dữ liệu (hiện ngay từ bộ nhớ, cập nhật ngầm) ---------- */
+let items = []; try { items = JSON.parse(localStorage.getItem('idx') || '[]'); } catch (e) {}
+let loaded = items.length > 0, stale = true, loadingIdx = null;
+function bodyMsg(t) { (tab === 'otd' ? $('otdBody') : $('histBody')).innerHTML = '<div class="empty">' + t + '</div>'; }
+function loadIndex(force) {
+  if (loaded && !stale && !force) { renderCurrent(); return Promise.resolve(); }
+  if (loaded) renderCurrent(); else bodyMsg('Đang tải...');
+  if (loadingIdx) return loadingIdx;
+  loadingIdx = (async () => {
+    try {
+      const r = await api({ a: 'index' });
+      const changed = !loaded || JSON.stringify(r.items) !== JSON.stringify(items);
+      items = r.items; loaded = true; stale = false;
+      try { localStorage.setItem('idx', JSON.stringify(items)); } catch (e) {}
+      if (changed) renderCurrent();
+    } catch (e) { if (!items.length) bodyMsg('Lỗi: ' + esc(e.message)); }
+    finally { loadingIdx = null; }
+  })();
+  return loadingIdx;
 }
 function renderCurrent() { if (tab === 'hist') renderHist(); else if (tab === 'otd') renderOtd(); }
 
 const cache = {}, queue = [], queued = new Set(); let busy = 0;
-function queueThumb(i) { if (!i.th || cache[i.th] || queued.has(i.th)) return; queued.add(i.th); queue.push(i.th); pump(); }
+function setThumb(id, url) { cache[id] = url; document.querySelectorAll('[data-th="' + id + '"] img').forEach(im => im.src = url); }
+async function queueThumb(i) {
+  if (!i.th || cache[i.th] || queued.has(i.th)) return;
+  queued.add(i.th);
+  const c = await tget(i.th);
+  if (c) { setThumb(i.th, c); return; }
+  queue.push(i.th); pump();
+}
 function pump() {
   while (busy < 3 && queue.length) {
-    const ids = queue.splice(0, 6); busy++;
+    const ids = queue.splice(0, 12); busy++;
     api({ a: 'thumbs', ids }).then(r => {
-      for (const id in r.thumbs) {
-        cache[id] = 'data:image/jpeg;base64,' + r.thumbs[id];
-        document.querySelectorAll('[data-th="' + id + '"] img').forEach(im => im.src = cache[id]);
-      }
+      for (const id in r.thumbs) { const u = 'data:image/jpeg;base64,' + r.thumbs[id]; setThumb(id, u); tset(id, u); }
     }).catch(() => ids.forEach(id => queued.delete(id))).finally(() => { busy--; pump(); });
   }
 }
@@ -386,6 +484,7 @@ function makeCell(i, badge) {
   return d;
 }
 
+/* ---------- Lịch sử theo tháng ---------- */
 function streakOf(byDay) {
   const d = new Date();
   if (!byDay[dkey(d)]) d.setDate(d.getDate() - 1);
@@ -442,6 +541,7 @@ function openDay(key, list) {
 }
 $('dayClose').onclick = () => $('dayov').classList.remove('on');
 
+/* ---------- Ngày này năm xưa ---------- */
 function renderOtd() {
   io.disconnect();
   const body = $('otdBody'); body.innerHTML = '';
@@ -463,12 +563,15 @@ function renderOtd() {
   }
 }
 
+/* ---------- Xem lớn ---------- */
 let curItem = null, curUrl = null;
+const fcache = new Map();
 async function openViewer(i) {
   curItem = i; $('vMedia').innerHTML = '<div class="empty">Đang tải...</div>';
   $('vInfo').textContent = fmtDate(i.ts); $('viewer').classList.add('on');
   try {
-    const r = await api({ a: 'file', id: i.id });
+    let r = fcache.get(i.id);
+    if (!r) { r = await api({ a: 'file', id: i.id }); fcache.set(i.id, r); if (fcache.size > 8) fcache.delete(fcache.keys().next().value); }
     if (curItem !== i) return;
     curUrl = URL.createObjectURL(b64Blob(r.data, r.mime));
     let el;
@@ -490,16 +593,18 @@ $('vDel').onclick = async () => {
   const i = curItem; toast('Đang xóa...');
   try {
     await api({ a: 'delete', id: i.id, th: i.th });
+    fcache.delete(i.id);
     closeViewer(); $('dayov').classList.remove('on'); toast('Đã xóa', 2000); loadIndex(true);
   } catch (e) { toast('Lỗi: ' + e.message, 4000); }
 };
 
+/* ---------- Đăng nhập ---------- */
 $('pwGo').onclick = async () => {
   const v = $('pw').value.trim(); if (!v) return;
   KEY = v; $('pwErr').textContent = ''; $('pwGo').disabled = true;
   try {
     const r = await api({ a: 'index' });
-    try { localStorage.setItem('k', KEY); } catch (e) {}
+    try { localStorage.setItem('k', KEY); localStorage.setItem('idx', JSON.stringify(r.items)); } catch (e) {}
     items = r.items; loaded = true; stale = false;
     $('login').classList.remove('on'); $('pw').value = ''; go('cam');
   } catch (e) { $('pwErr').textContent = e.message; }
@@ -507,7 +612,7 @@ $('pwGo').onclick = async () => {
 };
 $('pw').addEventListener('keydown', e => { if (e.key === 'Enter') $('pwGo').click(); });
 
-if (!KEY) $('login').classList.add('on'); else go('cam');
+if (!KEY) $('login').classList.add('on'); else { go('cam'); loadIndex(); }
 </script>
 </body>
 </html>
